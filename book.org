@@ -83,22 +83,24 @@ require a book of their own.
 
 The book is divided into four parts and a conclusion.
 
-Part I provides a tour of the virtualization landscape. We explain the
-problems that virtualization solves, survey the main approaches
-including full virtualization, paravirtualization, and containers, and
-position XCP-ng among other solutions, including other virtualization
-platforms such as QEMU and VirtualBox.
+Part I provides a tour of the virtualization landscape. Chapter 1
+presents the challenges inherent in deploying and maintaining services
+at scale. Chapter 2 then presents the different answers available to address these challenges: containers, emulators, and virtualization of different kinds, and positions XCP-ng among them.
 
-Part II looks at XCP-ng from the outside. We walk through the
-installation process, explore what the system looks like once
-installed, and perform basic operations on virtual machines. This
+Part II looks at XCP-ng from the outside. Chapter 3 traces its history,
+from the Xen research project to the 2018 fork from XenServer, and
+explains how this history continues to shape the project today. Chapter
+4 situates XCP-ng in the broader ecosystem of virtualization management
+tools, container orchestration platforms, and cloud providers. Chapter 5
+then walks through the installation process, explores what the
+system looks like once installed, and shows how to perform basic operations on virtual machines. This
 gives the reader a concrete foundation before we open the hood.
 
-Part III looks at XCP-ng from the inside. We describe the overall
-architecture, introduce the main components, and devote a chapter to
+Part III looks at XCP-ng from the inside. We describe its overall
+architecture, introduce its main components, and devote a chapter to
 each of them.
 
-Part IV is about contributing to XCP-ng. We explain how the project
+Part IV explains how to effectively contribute to XCP-ng. We explain how the project
 is organized, how to set up a development environment, and how to test
 your changes.
 
@@ -116,21 +118,53 @@ with the project and the broader virtualization ecosystem.
 
 *** Security and fault isolation
 
-** Chapter 2: A tour of the solutions
-
-*** Full virtualization and paravirtualization
+** Chapter 2: Addressing the challenges
 
 *** Containers
 
-*** Positioning of XCP-ng in this landscape
+Docker, podman
 
-*** A note on XenServer and its relationship to XCP-ng
+*** Emulators
 
-*** A note on XenOrchestra, OpenStack, CloudStack and cloud providers
+**** Full emulation
+
+Emulators for game consoles and old computers
+
+**** Wine: a special case
+
+*** Virtualization
+
+Desktop vs.server virtualization
+
+**** Full virtualization
+
+**** Paravirtualization, and where XCP-ng fits in
 
 * Part II: XCP-ng from the outside
 
-** Chapter 3: XCP-ng as a Linux distribution
+** Chapter 3: A brief history of XCP-ng
+
+*** The Xen research project
+
+*** XenServer: Xen goes commercial
+
+*** The 2018 fork: birth of XCP-ng
+
+*** An ongoing relationship with Citrix
+
+** Chapter 4: XCP-ng in the ecosystem
+
+*** Management and orchestration: XenOrchestra, OpenStack, CloudStack
+
+*** Container orchestration: Kubernetes
+
+*** Configuration management: Ansible, Puppet
+
+*** Cloud platforms: AWS, Azure, Google Cloud
+
+*** Where XCP-ng fits in
+
+** Chapter 5: XCP-ng: a Linux distribution
 
 *** The installer
 
@@ -138,7 +172,7 @@ with the project and the broader virtualization ecosystem.
 
 *** What is on the installed system
 
-** Chapter 4: Setting up a working environment
+** Chapter 6: Setting up a working environment
 
 *** Installing XCP-ng on one or more hosts
 
@@ -148,7 +182,7 @@ with the project and the broader virtualization ecosystem.
 
 * Part III: XCP-ng from the inside
 
-** Chapter 5: Overall architecture
+** Chapter 7: Overall architecture
 
 *** Xen: the hypervisor
 
@@ -160,7 +194,7 @@ with the project and the broader virtualization ecosystem.
 
 *** How these components fit together
 
-** Chapter 6 and beyond: one chapter per component
+** Chapter 8 and beyond: one chapter per component
 
 * Part IV: Contributing to XCP-ng
 
