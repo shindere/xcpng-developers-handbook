@@ -1,0 +1,23 @@
+#+TITLE: Contributing to The XCP-ng Developer's Handbook
+
+Contributions are welcome, whether you are a member of the XCP-ng
+development team or not.
+
+This guide explains how to contribute to this book. It will be
+expanded as the project matures.
+
+* Reporting issues
+
+If you find an error, an omission, or something that is unclear,
+please open an issue on the book's repository, whose URL can
+be found in its [[file:README.org][README]] file.
+
+* Contributing content
+
+If you want to contribute content, please first open an issue to
+discuss your proposal before submitting a pull request.
+
+* Source format
+
+This book is written in Org-Mode. More details on the toolchain and
+how to preview your changes locally will be added here soon.

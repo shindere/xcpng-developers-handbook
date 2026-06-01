@@ -1,0 +1,35 @@
+#+TITLE: The XCP-ng Developer's Handbook
+
+This book is a comprehensive guide for experienced developers who want
+to contribute to the XCP-ng project. It assumes familiarity with
+software development and OCaml, but no prior knowledge of
+virtualization.
+
+* Goals
+
+- Provide a complete and progressive introduction to virtualization
+  concepts, starting from first principles.
+- Explain how XCP-ng works, from its architecture down to its
+  individual components.
+- Guide the reader toward becoming an autonomous contributor to the
+  XCP-ng project.
+
+* What this book is not
+
+This book does not replace existing documentation. It articulates and
+complements it, filling in the gaps and providing the big picture that
+is otherwise hard to find. References to existing documentation are
+provided throughout.
+
+* Status
+
+This book is in early development. Feedback and contributions are
+welcome. See [[file:CONTRIBUTING.org][the contribution guide]] for details.
+
+The source code is hosted at:
+
+https://github.com/shindere/xcpng-developers-handbook
+
+* License
+
+To be determined.
