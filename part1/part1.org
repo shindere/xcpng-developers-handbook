@@ -1,5 +1,18 @@
 * Part I: The Virtualization Landscape
 
+Before diving into XCP-ng itself, we need to understand the landscape
+it belongs to. This part is organized in two chapters. Chapter 1
+identifies the challenges that arise when running services at scale:
+resource efficiency, isolation, portability, resilience, and others.
+Chapter 2 then surveys the main approaches that have been developed to
+address these challenges, from virtual environments and containers to
+virtualization, and positions XCP-ng among them.
+
+By presenting all the challenges first, we would like to encourage the
+reader to keep all the constraints at play in mind while examining each
+solution, making it easier to understand not just what each approach
+does, but also why it exists and what trade-offs it makes.
+
 #+INCLUDE: "chapter1.org" :minlevel 2
 
 #+INCLUDE: "chapter2.org" :minlevel 2
