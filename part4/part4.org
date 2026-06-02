@@ -1,0 +1,7 @@
+* Part IV: Contributing to XCP-ng
+
+#+INCLUDE: "chapterx.org" :minlevel 2
+
+#+INCLUDE: "chapterxplus1.org" :minlevel 2
+
+#+INCLUDE: "chapterxplus2.org" :minlevel 2

@@ -1,0 +1,29 @@
+* Chapter 2: Addressing the challenges
+
+
+** Language-level isolation: virtual environments
+
+
+** OS-level isolation: containers
+
+Docker, podman
+
+
+** Emulators
+
+*** Full emulation
+
+Emulators for game consoles and old computers
+
+
+*** Wine: a special case
+
+
+** Virtualization
+
+Desktop vs. server virtualization
+
+*** Full virtualization
+
+
+*** Paravirtualization, and where XCP-ng fits in

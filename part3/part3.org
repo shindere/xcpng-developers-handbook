@@ -1,0 +1,5 @@
+* Part III: XCP-ng from the inside
+
+#+INCLUDE: "chapter7.org" :minlevel 2
+
+** Chapter 8 and beyond: one chapter per component

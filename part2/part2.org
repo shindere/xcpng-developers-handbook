@@ -1,0 +1,6 @@
+* Part II: XCP-ng from the outside
+
+#+INCLUDE: "chapter3.org" :minlevel 2
+#+INCLUDE: "chapter4.org" :minlevel 2
+#+INCLUDE: "chapter5.org" :minlevel 2
+#+INCLUDE: "chapter6.org" :minlevel 2

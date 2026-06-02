@@ -1,0 +1,18 @@
+* Chapter 1: The challenges of running services at scale
+
+** Why not simply use one machine per service?
+
+
+** Portability and reproducibility
+
+
+** Resilience, high availability, and updates
+
+
+** Security
+
+
+** Managing multiple environments: development, staging, and production
+
+
+** Orchestration: managing large numbers of machines

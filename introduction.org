@@ -1,0 +1,107 @@
+* Introduction
+
+** What this book is about
+
+Running multiple services in production raises a fundamental tension.
+The simplest approach is to dedicate a physical machine to each
+service, which guarantees isolation: services cannot affect each
+other. But in practice, each machine would use only a small fraction
+of its available resources, and the cost of buying and maintaining a
+large number of machines quickly becomes prohibitive. The natural
+response is to *share* physical resources across services. But sharing
+raises in turn the question of isolation: how do you prevent services
+from affecting each other when they run on the same machine? Getting
+the most out of your hardware while keeping your services well
+isolated from each other is the core problem that virtualization
+addresses.
+
+It does so by running services inside virtual machines instead of
+directly on physical hardware. From the point of view of the software
+running inside it, a virtual machine looks and behaves like a real
+computer, with its own operating system, memory, storage, and network
+interfaces. The physical machine hosting the virtual machines is
+called the *host*. The virtual machines themselves are called
+*guests*. Note that these are relative terms: a virtual machine can
+itself run other virtual machines, in which case it is simultaneously
+a guest from the point of view of the physical machine, and a host
+from the point of view of the virtual machines running inside it.
+
+The idea of running services inside virtual machines turns out to have
+profound consequences for the way infrastructure is built and
+operated. It also turns out to be surprisingly difficult to implement
+well. XCP-ng is one of the platforms that implements it, and this book
+is about how it does so.
+
+XCP-ng has its roots in XenServer, a virtualization platform
+developed by Citrix. In 2018, following changes in Citrix's licensing
+policy, XCP-ng was created as a fully open-source fork of XenServer.
+The two projects continue to share a common codebase, and
+contributions flow between them. This history explains why some
+existing documentation refers to XenServer: much of it remains
+relevant to XCP-ng, and we will point to it where appropriate.
+
+** Who this book is for
+
+This book is written for experienced software developers whose goal is
+to become contributors to XCP-ng, but who have no background in
+virtualization. Prior experience with virtual machines or containers
+as a user may help, but is not required.
+
+Parts I, II and III of this book, which cover virtualization concepts
+and the architecture of XCP-ng, will be useful to anyone seeking to
+understand the platform, regardless of whether they intend to
+contribute. Part IV, which covers the contribution process, is
+specifically aimed at developers who want to get involved in the
+project.
+
+** What this book does not cover
+
+This book is not a replacement for existing documentation. What it
+provides is a map: a coherent, progressive path through the project,
+from the first principles of virtualization to the practical details
+of contributing to XCP-ng, building the foundations that other
+documentation tends to assume. Throughout the book, we refer to
+existing documentation where relevant. Readers who want to go deeper
+into specific topics may find that existing documentation is easier
+to approach after reading this book.
+
+Beyond this, the following topics are outside the scope of this book:
+
+- Advanced network and storage configuration.
+- Performance tuning and optimization.
+- XenOrchestra, except where necessary to understand the boundary
+  between what XCP-ng and XenOrchestra each handle.
+- Third-party integrations and plugins.
+- Security hardening.
+
+These topics are either covered by existing documentation or would
+require a book of their own.
+
+** How this book is organized
+
+The book is divided into four parts and a conclusion.
+
+Part I provides a tour of the virtualization landscape. Chapter 1
+presents the challenges inherent in deploying and maintaining services
+at scale. Chapter 2 then presents the different answers available to address these challenges: containers, emulators, and virtualization of different kinds, and positions XCP-ng among them.
+
+Part II looks at XCP-ng from the outside. Chapter 3 traces its history,
+from the Xen research project to the 2018 fork from XenServer, and
+explains how this history continues to shape the project today. Chapter
+4 situates XCP-ng in the broader ecosystem of virtualization management
+tools, container orchestration platforms, and cloud providers. Chapter 5
+then walks through the installation process, explores what the
+system looks like once installed, and shows how to perform basic operations on virtual machines. This
+gives the reader a concrete foundation before we open the hood.
+
+Part III looks at XCP-ng from the inside. We describe its overall
+architecture, introduce its main components, and devote a chapter to
+each of them.
+
+Part IV explains how to effectively contribute to XCP-ng. We explain how the project
+is organized, how to set up a development environment, and how to test
+your changes.
+
+The conclusion reviews what has been covered and provides guidance on
+how to go further, with pointers to resources for staying up to date
+with the project and the broader virtualization ecosystem.

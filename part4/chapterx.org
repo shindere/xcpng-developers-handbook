@@ -1,0 +1,5 @@
+* Chapter x: Organization of the project
+
+** Repositories
+
+** Contribution process

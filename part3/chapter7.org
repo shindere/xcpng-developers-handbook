@@ -1,0 +1,11 @@
+* Chapter 7: Overall architecture
+
+** Xen: the hypervisor
+
+** Dom0 and DomU
+
+** XenStore
+
+** XAPI
+
+** How these components fit together

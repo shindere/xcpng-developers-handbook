@@ -1,0 +1,7 @@
+* Chapter 5: XCP-ng: a Linux distribution
+
+** The installer
+
+** What is on the ISO image
+
+** What is on the installed system

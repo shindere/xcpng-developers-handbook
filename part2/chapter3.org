@@ -1,0 +1,9 @@
+* Chapter 3: A brief history of XCP-ng
+
+** The Xen research project
+
+** XenServer: Xen goes commercial
+
+** The 2018 fork: birth of XCP-ng
+
+** An ongoing relationship with Citrix

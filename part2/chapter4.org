@@ -1,0 +1,11 @@
+* Chapter 4: XCP-ng in the ecosystem
+
+** Management and orchestration: XenOrchestra, OpenStack, CloudStack
+
+** Container orchestration: Kubernetes
+
+** Configuration management: Ansible, Puppet
+
+** Cloud platforms: AWS, Azure, Google Cloud
+
+** Where XCP-ng fits in

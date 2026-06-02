@@ -1,0 +1,7 @@
+* Chapter 6: Setting up a working environment
+
+** Installing XCP-ng on one or more hosts
+
+** Setting up a pool
+
+** Basic virtual machine operations
