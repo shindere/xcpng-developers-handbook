@@ -110,17 +110,25 @@ with the project and the broader virtualization ecosystem.
 
 * Part I: The Virtualization Landscape
 
-** Chapter 1: Problems that virtualization solves
+** Chapter 1: The challenges of running services at scale
 
-*** Resource isolation and consolidation
+*** Why not simply use one machine per service?
 
 *** Portability and reproducibility
 
-*** Security and fault isolation
+*** Resilience, high availability, and updates
+
+*** Security
+
+*** Managing multiple environments: development, staging, and production
+
+*** Orchestration: managing large numbers of machines
 
 ** Chapter 2: Addressing the challenges
 
-*** Containers
+*** Language-level isolation: virtual environments
+
+*** OS-level isolation: containers
 
 Docker, podman
 
