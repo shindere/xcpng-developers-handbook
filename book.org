@@ -2,6 +2,8 @@
 #+AUTHOR: Seb Hinderer
 #+EMAIL: sebastien.hinderer@vates.tech
 
+#+OPTIONS: num:nil
+
 #+INCLUDE: "introduction.org"
 
 #+INCLUDE: "part1/part1.org"
