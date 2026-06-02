@@ -1,0 +1,46 @@
+name: Publish book
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Install Emacs
+        run: sudo apt-get install -y emacs-nox
+
+      - name: Generate HTML file
+        run: |
+          emacs --batch \
+                --load org \
+                --visit book.org \
+                --funcall org-html-export-to-html
+          mkdir site
+          mv book.html site/index.html
+
+      - name: Upload pages artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: ./site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5

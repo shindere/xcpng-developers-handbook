@@ -33,3 +33,9 @@ https://github.com/shindere/xcpng-developers-handbook
 * License
 
 To be determined.
+
+* Preview
+
+The book can be pre-viewed in HTML format at the following address:
+
+https://shindere.github.io/xcpng-developers-handbook/

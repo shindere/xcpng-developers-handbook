@@ -1,1 +1,4 @@
 # Files Git should ignore
+
+# The site directory where publication artifacts get stored
+site/
