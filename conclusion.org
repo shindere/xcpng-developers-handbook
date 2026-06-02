@@ -1,4 +1,8 @@
 * Conclusion
+:PROPERTIES:
+:UNNUMBERED: t
+:END:
+
 
 ** What has been covered
 

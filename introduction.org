@@ -1,4 +1,7 @@
 * Introduction
+:PROPERTIES:
+:UNNUMBERED: t
+:END:
 
 ** What this book is about
 
