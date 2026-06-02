@@ -1,4 +1,6 @@
 #+TITLE: The XCP-ng Developer's Handbook
+#+AUTHOR: Seb Hinderer
+#+EMAIL: sebastien.hinderer@vates.tech
 
 #+INCLUDE: "introduction.org"
 
