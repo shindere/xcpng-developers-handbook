@@ -76,9 +76,18 @@ Beyond this, the following topics are outside the scope of this book:
   between what XCP-ng and XenOrchestra each handle.
 - Third-party integrations and plugins.
 - Security hardening.
+- System design and distributed systems architecture. Virtualization can
+  be seen as one of the building blocks that distributed systems are
+  built upon, but the broader questions of how to design systems that
+  scale, tolerate failures, and remain performant under load are outside
+  the scope of this book. [[challenges][Chapter 1]] touches on orchestration as one
+  of the challenges of running services at scale, and [[ecosystem][Chapter 4]] situates
+  XCP-ng in the broader ecosystem of
+  infrastructure tools, both of which will help clarify where this
+  book's scope ends and distributed systems architecture begins.
 
 These topics are either covered by existing documentation or would
-require a book of their own.
+require books of their own.
 
 ** How this book is organized
 
