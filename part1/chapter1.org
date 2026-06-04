@@ -1,18 +1,35 @@
 * <<challenges>>Chapter 1: The challenges of running services at scale
 
-** Why not simply use one machine per service?
+Running services /at scale/ means operating in an environment where
+the number of services, users, or operational constraints has grown
+beyond what can be managed naively. This chapter lays out the
+constraints that arise in such environments.
+
+As discussed in the Introduction, running different services on
+different machines is inefficient, but running them on the same one
+raises isolation and security concerns. Other constraints include
+keeping them available despite hardware failures and software updates,
+managing multiple environments from development to production, and
+orchestrating the whole system, meaning coordinating tasks like
+deploying, monitoring, and restarting large numbers of services and
+machines.
+
+These constraints do not exist independently of each other: a
+decision made with resource efficiency in mind will have consequences
+for resilience; a choice driven by security requirements will affect
+how environments are managed. They thus need to be considered
+together, which is why we present them all before examining any
+solution. The set of criteria that emerges from this chapter will help
+situate each of the approaches presented in Chapter 2.
+
+** Resource efficiency
 
 
-** Portability and reproducibility
 
+** Isolation and security
 
-** Resilience, high availability, and updates
+** Resilience and updates
 
+** Portability and environment management
 
-** Security
-
-
-** Managing multiple environments: development, staging, and production
-
-
-** Orchestration: managing large numbers of machines
+** Orchestration

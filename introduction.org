@@ -12,7 +12,7 @@ other. But in practice, each machine would use only a small fraction
 of its available resources, and the cost of buying and maintaining a
 large number of machines quickly becomes prohibitive. The natural
 response is to *share* physical resources across services. But sharing
-raises in turn the question of isolation: how do you prevent services
+in turn raises isolation and security concerns: how do you prevent services
 from affecting each other when they run on the same machine? Getting
 the most out of your hardware while keeping your services well
 isolated from each other is the core problem that virtualization
