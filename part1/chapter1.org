@@ -24,11 +24,11 @@ situate each of the approaches presented in Chapter 2.
 
 ** Resource efficiency
 
-The simplest way to allocate resources (CPU, RAM, storage, and network
-bandwidth) to a service is to dedicate a physical machine to it.
-Although this has the appeal of simplicity (the service has exclusive
-access to all the resources of the machine), it comes with an
-intrinsic inefficiency that we will now explain.
+The simplest way to allocate resources (CPU, RAM, storage, network
+bandwidth and more generally any device) to a service is to dedicate a
+physical machine to it. Although this has the appeal of simplicity (the
+service has exclusive access to all the resources of the machine), it
+comes with an intrinsic inefficiency that we will now explain.
 
 A machine must be capable of handling peak load. As brief as the peak
 may be, the machine /must/ be sized to handle it, which means that for
@@ -63,7 +63,20 @@ irreversible loss of the physical resources that went into making
 them. At the scale of tens or hundreds of machines, these costs add up
 to an environmental impact that is no longer negligible.
 
-** Isolation and security
+** Isolation
+
+As established in the previous section, running one service per
+machine is not viable. The only practical approach is thus to run
+multiple services on the same machine, which implies sharing its
+resources. This in turn translates into two constraints.
+
+The first is the equitable sharing of resources. No service should be
+able to lessen the others in terms of access to the machine's
+resources.
+
+The second is the isolation of data and privileges. A service should
+not be able to read the data of another service running on the same
+machine, nor benefit from its privileges.
 
 ** Resilience and updates
 

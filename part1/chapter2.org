@@ -1,8 +1,10 @@
 * Chapter 2: Addressing the challenges
 
-
 ** Language-level isolation: virtual environments
 
+** OS foundations: processes, scheduling, and permissions
+
+User vs. kernel mode, system calls.
 
 ** OS-level isolation: containers
 
