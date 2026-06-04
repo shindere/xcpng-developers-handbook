@@ -48,7 +48,8 @@ relevant to XCP-ng, and we will point to it where appropriate.
 This book is written for experienced software developers whose goal is
 to become contributors to XCP-ng, but who have no background in
 virtualization. Prior experience with virtual machines or containers
-as a user may help, but is not required.
+as a user may help, but is not required. No prior experience with
+production infrastructure or systems administration is assumed either.
 
 Parts I, II and III of this book, which cover virtualization concepts
 and the architecture of XCP-ng, will be useful to anyone seeking to

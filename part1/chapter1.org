@@ -24,7 +24,44 @@ situate each of the approaches presented in Chapter 2.
 
 ** Resource efficiency
 
+The simplest way to allocate resources (CPU, RAM, storage, and network
+bandwidth) to a service is to dedicate a physical machine to it.
+Although this has the appeal of simplicity (the service has exclusive
+access to all the resources of the machine), it comes with an
+intrinsic inefficiency that we will now explain.
 
+A machine must be capable of handling peak load. As brief as the peak
+may be, the machine /must/ be sized to handle it, which means that for
+the rest of the time, a fraction of its CPU or memory remains unused.
+This is not a failure of planning: it is a structural property of
+dedicating a machine to a single service.
+
+Beyond this waste of resources, a dedicated machine carries operational
+costs that are easy to underestimate. On the hardware side, components
+fail and must be repaired or replaced, and when the service grows and
+the machine can no longer keep up, capacity must be added, for
+instance by adding RAM, replacing disks with larger ones, or adding
+network interfaces. On the software side, the operating system and all
+installed software must be kept up to date. And when the machine
+reaches the end of its life, it must be decommissioned: any remaining
+data must be migrated, the machine must be wiped, and then either
+recycled or donated.
+
+But an organization running tens or hundreds of services on dedicated
+machines would face these costs for each machine in the fleet,
+multiplying both the inefficiency and the operational burden.
+
+And so does the environmental cost. Indeed, each step of each
+machine's life cycle does have an environmental impact. Manufacturing
+consumes raw materials, including rare earth elements whose extraction
+carries its own increasing environmental cost. Running consumes
+electricity, and so do the cooling systems that keep datacenters from
+overheating, which in many cases also consume significant quantities
+of water. Finally, recycling itself consumes energy and cannot even be
+complete: some components must be discarded, representing an
+irreversible loss of the physical resources that went into making
+them. At the scale of tens or hundreds of machines, these costs add up
+to an environmental impact that is no longer negligible.
 
 ** Isolation and security
 
