@@ -2,7 +2,9 @@
 
 ** Language-level isolation: virtual environments
 
-** OS foundations: processes, scheduling, and permissions
+** Declarative packaging and configuration: Nix and Guix
+
+** OS foundations: processes, scheduling and permissions
 
 User vs. kernel mode, system calls.
 
