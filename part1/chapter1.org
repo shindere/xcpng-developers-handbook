@@ -118,4 +118,29 @@ takes us directly to the question of orchestration.
 
 ** Orchestration
 
+Most of what has been discussed so far has concerned a single
+service. In practice, however, an organization runs tens or hundreds
+of services, each with its own life cycle: initial deployment,
+successive updates, monitoring, restarts when it fails, and eventual
+decommissioning. Managing these life cycles manually is already
+demanding for a handful of services, and even then it is error-prone.
+At the scale of tens or hundreds of services, each running on
+multiple machines, it is simply not an option.
+
+The situation is further complicated by the fact that services often
+depend on one another. A service that relies on another cannot be
+deployed or updated independently of it. Coordinating deployments and
+updates across interdependent services is exponentially more complex
+than managing each service in isolation.
+
+The same applies to development. Developing and testing a service
+requires an environment that is close enough to production for the
+results to be meaningful, which adds yet another context in which the
+full set of dependencies must be deployed coherently.
+
+Orchestration is the name given to this problem: how to coordinate
+the development, testing, deployment, monitoring, and life cycle of a
+large number of services running on a large number of machines,
+reliably and without constant manual intervention.
+
 ** Summary
