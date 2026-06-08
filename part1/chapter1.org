@@ -78,8 +78,44 @@ The second is the isolation of data and privileges. A service should
 not be able to read the data of another service running on the same
 machine, nor benefit from its privileges.
 
-** Resilience and updates
+** Availability
 
-** Portability and environment management
+From a user's perspective, a service is either available or it is
+not. When it is not, whatever the reason, the user cannot do what
+they came to do. Availability is therefore not a nice-to-have: for
+any service that people depend on, it is a hard requirement.
+
+Yet a service running on a single machine cannot fulfill this
+requirement: any failure, whether a hardware fault, a software crash,
+or a necessary maintenance operation, interrupts it, which requires
+redundancy: running multiple instances of the service on multiple
+machines, so that if one machine fails, the others take over without
+interruption.
+
+Redundancy, however, introduces a new constraint. Running multiple
+instances of the same service on different machines only works if
+those instances are consistent with one another. A service deployed
+differently on each machine, with different configurations or
+different versions of its dependencies, will behave unpredictably.
+The ability to deploy a service reliably and consistently across
+multiple machines is therefore a prerequisite for redundancy.
+
+This need extends beyond production. Development and testing
+environments must be close enough to the production environment for
+tests to be meaningful, yet distinct from it to avoid any risk of
+disrupting the service. This again requires the ability to deploy the
+service consistently in multiple contexts.
+
+Finally, keeping a service available over time raises the question of
+updates. Any service in production will inevitably need to be
+updated, whether to add new features, fix bugs, or address security
+vulnerabilities. But updating a service, whether the service itself
+or its dependencies, risks introducing regressions or, if done
+carelessly, causing the very interruption that redundancy was
+designed to prevent. How to update a service running on multiple
+machines, progressively and without interruption, is a problem that
+takes us directly to the question of orchestration.
 
 ** Orchestration
+
+** Summary
