@@ -143,4 +143,38 @@ the development, testing, deployment, monitoring, and life cycle of a
 large number of services running on a large number of machines,
 reliably and without constant manual intervention.
 
-** Summary
+** Summary: the set of constraints
+
+As has been seen, running one service per machine is not an option.
+Beyond its economic and environmental costs, it is simply not viable
+in practice. The only remaining option is thus to run multiple
+services on the same machine, which raises the need for both
+equitable access to its resources and isolation between services (no
+service should be able to access the data or privileges of another).
+
+Moreover, keeping services available requires redundancy, which in
+turn requires the ability to deploy services consistently across
+multiple machines and in multiple environments. And as the number of
+(often interdependent) services grows, so does the need to coordinate
+their deployment, monitoring, and life cycles without constant manual
+intervention.
+
+Throughout this chapter, we have identified a set of constraints that
+arise when running services at scale. As announced in the
+introduction, it is against this set of constraints that we will
+situate each of the approaches presented in the next chapter. To help
+the reader keep them in mind while reading, here they are in
+synthesized form:
+
+- Run multiple services on the same machine, with equitable access
+  to its resources: CPU, memory, storage, network bandwidth, and
+  devices.
+- Prevent any service from accessing the data or privileges of
+  another.
+- Deploy services across multiple machines so that they remain
+  available despite hardware failures and can be updated consistently
+  and without interruption.
+- Keep development, testing, and production environments consistent
+  with one another while keeping them distinct.
+- Coordinate the deployment, monitoring, and life cycles of many
+  often interdependent services without constant manual intervention.
