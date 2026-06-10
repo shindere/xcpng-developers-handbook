@@ -1,5 +1,24 @@
 * Chapter 2: Addressing the challenges
 
+The previous chapter identified a set of constraints that arise when
+running services at scale. This chapter examines the main approaches
+that have been developed to address them. For each approach, we first
+describe what it is and how it works, then situate it against the
+constraints identified in the previous chapter.
+
+Not all approaches address all constraints. This is not a shortcoming:
+satisfying each constraint has a cost, in terms of complexity,
+resources, or trade-offs with other constraints, and different
+approaches make different choices about which costs are worth paying.
+Understanding these choices is as important as understanding the
+approaches themselves.
+
+The approaches examined here range from language-level virtual
+environments and OS-level containers to full emulation and
+virtualization of different kinds. XCP-ng is a virtualization
+platform, and by the end of this chapter the reader will understand
+where it sits among these approaches and why.
+
 ** Language-level isolation: virtual environments
 
 ** Declarative packaging and configuration: Nix and Guix
