@@ -21,6 +21,130 @@ where it sits among these approaches and why.
 
 ** Language-level isolation: virtual environments
 
+We have not yet asked how a service is installed on a machine. The
+natural starting point is the system package manager: =apt= on
+Debian-based systems, =dnf= on Red Hat-based systems, and their
+equivalents elsewhere. A package manager not only installs a package
+but also, before doing so, identifies and installs a list of packages
+it depends on. For each of these dependencies, there may be an
+additional constraint on the version: a package may require another at
+version 2.0 or above, or between versions 1.4 and 2.0, or exactly at
+version 3.1. The package manager's job is to find a set of package
+versions that satisfies all these constraints simultaneously and to
+install them.
+
+Such a system of constraints typically has many solutions. The package
+manager picks one, and the result is a coherent set of packages whose
+components are expected to work together. From a user's perspective,
+this is a desirable property: the system stays current as packages are
+updated and constraints evolve, the package manager may find a new
+consistent set, and coherence is maintained at each step.
+
+For a developer working across multiple projects, though, this model shows its
+limits. Two projects may require incompatible versions of the same
+library: no single version can satisfy the constraints of both. Since
+the system package manager allows only one version of a given library
+to be present at a time, no solution exists that satisfies both
+projects simultaneously. There is also a second pressure: language
+ecosystems tend to move faster than distributions, with new package
+versions published directly by their authors rather than going through
+the slower process of distribution packaging. Both factors contributed
+to the emergence of language-specific tools that address the problem
+within their own scope.
+
+These tools emerged pragmatically, within specific communities, to
+solve immediate needs. Their language-specificity is both a strength
+and a limit: a tool designed for a given ecosystem can integrate
+intimately with its conventions, package metadata, and build tooling,
+in a way that a language-agnostic tool could not. But it can only ever
+solve the problem within that ecosystem.
+
+The approach these tools share is straightforward: a dedicated
+directory that holds its own copy of the packages installed for a given
+project, combined with a set of environment variable modifications that
+redirect the language's tools toward that directory instead of the
+global one. A process launched with the appropriate environment will
+find its dependencies in that directory rather than in the system-wide
+store. The packages installed in one environment are invisible to
+another, and conflicts between projects become impossible in principle,
+within the bounds of what the language's tooling manages.
+
+Like system package managers, these tools express dependencies as
+constraints on version numbers and must find a solution that satisfies
+them all. Unlike system package managers, many of them record that
+solution in a lock file: a precise, complete record of the exact
+version of every dependency as resolved at a given point in time. A
+lock file transforms a set of constraints, which may have many
+solutions, into a single fixed solution that can be reproduced exactly
+across machines and over time. Tools like =poetry=, =stack=, and =uv=
+generate such lock files as a matter of course.
+
+These tools differ in what they expose to the user. An environment can
+be local to a single project, or shared across several; some tools
+offer one mode, some the other, and some both. =npm= in JavaScript and
+=stack= in Haskell treat the environment as a property of the project,
+as does Cargo in Rust. =nvm= in JavaScript and =rbenv= in Ruby offer
+named environments that can span multiple projects. =venv= and
+=virtualenv= in Python leave the choice to the user. =opam switch= in
+OCaml also supports both modes: switches can be global and shared
+across projects, or local to a specific project directory.
+
+The =conda= Python tool occupies a distinct position in this landscape.
+Unlike the tools described above, it can manage dependencies written in
+other languages, including C libraries that Python packages may depend
+on. This makes it more general than the other tools described here,
+but it remains an ecosystem-specific solution. As we will see in the
+next section, Nix and Guix generalize this further in a principled way,
+handling dependencies of any kind, for any project, within a single
+unified framework.
+
+Tools such as Snap, Flatpak, and AppImage take a different approach:
+rather than isolating dependencies in a separate directory, they bundle
+them directly inside the package. Unlike the ecosystem-specific tools
+described above, they are not tied to any particular language. This
+eliminates conflicts with system libraries for the bundled application,
+but these tools are designed primarily for deploying desktop
+applications, not services, and they fall outside the scope of what we
+examine in this chapter.
+
+In terms of the constraints identified in the previous chapter, these
+ecosystem-specific tools address a narrow slice. The first constraint
+asks that multiple services be able to run on the same machine with
+equitable access to its resources: these tools do not control resource
+usage in any way. The second constraint asks that no service be able to
+access the data or privileges of another. These tools offer little
+here: two processes running in different environments share the same
+operating system, the same file system outside their respective
+directories, and the same user permissions. More fundamentally, the
+isolation they provide rests entirely on a cooperative assumption:
+every tool in the ecosystem must agree to respect the environment
+variables that redirect package lookups. A package that hardcodes a
+path to a system library, or a build script that bypasses the package
+manager entirely, will silently break out of the isolation with no
+external mechanism to prevent it. The boundary exists only because
+every participant agrees to observe it. As we will see, this assumption
+persists in different forms through the approaches that follow, and
+addressing it fully requires mechanisms of a different kind entirely.
+
+The third constraint concerns deployment across multiple machines and
+availability despite hardware failures. These tools are silent on
+availability and fault tolerance, though the use of lock files does
+facilitate consistent deployment across machines, which is a partial
+contribution to this constraint. The fifth constraint, concerning the
+coordination of many interdependent services, is likewise not
+addressed.
+
+The fourth constraint is where these tools have something genuine to
+offer: the requirement that development, testing, and production
+environments remain consistent with one another. By isolating
+dependencies on a per-project basis and, where lock files are used,
+fixing an exact solution to the dependency constraints, these tools
+make it possible to reproduce a known package configuration across
+machines and over time. This reproducibility, however, extends only to
+the packages the tool manages: dependencies at the system level remain
+outside its reach. That boundary is precisely what Nix and Guix set out
+to eliminate.
+
 ** Declarative packaging and configuration: Nix and Guix
 
 ** OS foundations: processes, scheduling and permissions
