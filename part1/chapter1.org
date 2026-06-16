@@ -166,15 +166,15 @@ situate each of the approaches presented in the next chapter. To help
 the reader keep them in mind while reading, here they are in
 synthesized form:
 
-- Run multiple services on the same machine, with equitable access
+1. Run multiple services on the same machine, with equitable access
   to its resources: CPU, memory, storage, network bandwidth, and
   devices.
-- Prevent any service from accessing the data or privileges of
+2. Prevent any service from accessing the data or privileges of
   another.
-- Deploy services across multiple machines so that they remain
+3. Deploy services across multiple machines so that they remain
   available despite hardware failures and can be updated consistently
   and without interruption.
-- Keep development, testing, and production environments consistent
+4. Keep development, testing, and production environments consistent
   with one another while keeping them distinct.
-- Coordinate the deployment, monitoring, and life cycles of many
+5. Coordinate the deployment, monitoring, and life cycles of many
   often interdependent services without constant manual intervention.
