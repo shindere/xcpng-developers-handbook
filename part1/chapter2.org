@@ -147,6 +147,108 @@ to eliminate.
 
 ** Declarative packaging and configuration: Nix and Guix
 
+As has been seen, system package managers have been designed to
+maintain a coherent set of packages across installations and updates:
+they have not been designed to address reproducibility concerns.
+Neither do they permit the coexistence of two versions of the same
+package. The tools examined in the previous section address these
+issues only partially: they are mostly confined to a single ecosystem,
+which means they are not general enough to cover all dependencies in a
+uniform way. And even for the dependencies they do cover, nothing
+prevents a package from relying on anything other than its declared
+dependencies.
+
+The Nix package manager was designed to overcome these limitations. Its
+central idea is that each package is identified by a hash derived from
+all of its /inputs/: its source code, build instructions, and
+build-time and run-time dependencies. Readers familiar with Git will
+recognize the structure: just as a commit hash uniquely identifies a
+point in a repository's history by capturing both the state of the tree
+and its ancestry, a Nix package hash uniquely identifies a build result
+by capturing everything that went into producing it. Nix installs each
+package in its own directory, as ecosystem-specific tools do; what
+distinguishes it is that the directory name is derived from the
+package's hash, so any difference in inputs, however slight, results in
+a distinct package in a distinct location.
+
+This more complete and rigorous management of dependencies does not
+only allow packages to be distinguished more precisely from one
+another: because each package is fully determined by its inputs, the
+build process becomes much more deterministic, producing the same
+output from the same inputs on any machine. This property is what we
+call reproducibility. Since this is a primary concern for Nix, it
+ensures that the package's build process can only access what has been
+explicitly declared as an input, so that only its declared inputs can
+influence the result. This isolation is enforced by mechanisms provided
+by the operating system, which we will examine later in this chapter.
+It is worth pausing on this point. In the previous section, isolation
+relied on a cooperative assumption: every package had to agree to
+respect the conventions that made isolation possible. Here, for the
+first time, we encounter a constraint that is enforced mechanically
+rather than observed by convention. A package's build process cannot
+reach outside its declared inputs, not because it is expected to
+refrain from doing so, but because it is made impossible. This
+isolation applies only during the package's build stage: once a package
+has been built, the resulting binaries run without any restriction
+imposed by Nix.
+
+This approach, too, has its limits: not all dependencies can be
+expressed as Nix inputs. The kernel is the most significant example:
+it is provided by the host system and lies outside what Nix can
+describe or control. A build that depends on kernel-specific values,
+like the output of the =uname= command, will therefore produce
+different results on machines with different kernel versions, even if
+all its other inputs are identical. NixOS addresses this by extending
+Nix's declarative approach to the configuration of an entire system,
+including its kernel: it thus becomes possible to express all aspects
+of a machine's configuration as Nix inputs, and to reproduce it exactly
+on another machine. Guix and Guix System are the GNU project's
+equivalents of Nix and NixOS respectively. Where Nix uses a dedicated
+language designed specifically for package description, Guix uses
+Guile, a general-purpose Scheme implementation: package descriptions
+are Scheme values that can be computed, which means the full range of
+Scheme's factorisation and reuse mechanisms are available to facilitate
+the development and maintenance of package descriptions and build
+recipes.
+
+Against the constraints identified in the previous chapter, Nix and
+Guix have little to say about the first: they exercise no control over
+how processes share CPU time, memory, or any other resource.
+
+The second constraint asks that no service be able to access the data
+or privileges of another. The cooperative assumption is not eliminated
+here but reduced in scope. At the package build stage, isolation is
+enforced: a package cannot silently depend on anything other than its
+declared inputs. Once the package has been built, though, the resulting
+binaries run without any restriction imposed by Nix: nothing prevents
+them from reading files outside their environment, opening network
+connections, or interacting with other processes. The activation of a
+Nix environment, like that of an ecosystem-specific tool, relies on
+environment variable adjustments that any program is free to ignore.
+The boundary that Nix draws is precise and reliable at the package
+build stage, but once the resulting binaries are running, the
+cooperative assumption remains.
+
+The third constraint concerns deployment across multiple machines and
+continued availability despite hardware failures. NixOS and Guix System
+address the first part: because a system configuration is fully
+declared, it can be reproduced exactly on another machine, which makes
+consistent deployment easier. The second part, availability despite
+hardware failures, however remains outside their scope.
+
+The fourth constraint is where Nix and Guix offer their most
+substantial contribution. Because every dependency is a declared input
+with a fixed identity, the reproducibility they provide extends to the
+entire user-space environment. NixOS and Guix System extend this
+further by bringing the kernel configuration within the scope of what
+is declared, reducing though not eliminating the remaining sources of
+variance: even with a fully declared system configuration, factors such
+as differences in underlying hardware or non-deterministic behaviour in
+the kernel itself remain outside the reach of any declarative tool.
+
+The fifth constraint, concerning the coordination of many
+interdependent services, is not addressed by these tools either.
+
 ** OS foundations: processes, scheduling and permissions
 
 User vs. kernel mode, system calls.
