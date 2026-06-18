@@ -15,9 +15,14 @@ approaches themselves.
 
 The approaches examined here range from language-level virtual
 environments and OS-level containers to full emulation and
-virtualization of different kinds. XCP-ng is a virtualization
-platform, and by the end of this chapter the reader will understand
-where it sits among these approaches and why.
+virtualization of different kinds. Among them, the mechanisms that
+operating systems provide for process isolation, scheduling, and access
+control occupy a particular place: they represent the earliest
+systematic response to constraints 1 and 2, and they also introduce
+concepts that are necessary for understanding the approaches that
+follow. XCP-ng is a virtualization platform, and by the end of this
+chapter the reader will understand where it sits among these approaches
+and why.
 
 ** Language-level isolation: virtual environments
 
