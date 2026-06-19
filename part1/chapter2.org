@@ -16,13 +16,12 @@ approaches themselves.
 The approaches examined here range from language-level virtual
 environments and OS-level containers to full emulation and
 virtualization of different kinds. Among them, the mechanisms that
-operating systems provide for process isolation, scheduling, and access
-control occupy a particular place: they represent the earliest
-systematic response to constraints 1 and 2, and they also introduce
-concepts that are necessary for understanding the approaches that
-follow. XCP-ng is a virtualization platform, and by the end of this
-chapter the reader will understand where it sits among these approaches
-and why.
+operating systems provide for scheduling, isolation, and access control
+occupy a particular place: they represent the earliest systematic
+response to constraints 1 and 2, and they also introduce concepts that
+are necessary for understanding the approaches that follow. XCP-ng is a
+virtualization platform, and by the end of this chapter the reader will
+understand where it sits among these approaches and why.
 
 ** Language-level isolation: virtual environments
 
@@ -68,7 +67,7 @@ The approach these tools share is straightforward: a dedicated
 directory that holds its own copy of the packages installed for a given
 project, combined with a set of environment variable modifications that
 redirect the language's tools toward that directory instead of the
-global one. A process launched with the appropriate environment will
+global one. A program launched with the appropriate environment will
 find its dependencies in that directory rather than in the system-wide
 store. The packages installed in one environment are invisible to
 another, and conflicts between projects become impossible in principle,
@@ -117,19 +116,19 @@ ecosystem-specific tools address a narrow slice. The first constraint
 asks that multiple services be able to run on the same machine with
 equitable access to its resources: these tools do not control resource
 usage in any way. The second constraint asks that no service be able to
-access the data or privileges of another. These tools offer little
-here: two processes running in different environments share the same
-operating system, the same file system outside their respective
-directories, and the same user permissions. More fundamentally, the
-isolation they provide rests entirely on a cooperative assumption:
-every tool in the ecosystem must agree to respect the environment
-variables that redirect package lookups. A package that hardcodes a
-path to a system library, or a build script that bypasses the package
-manager entirely, will silently break out of the isolation with no
-external mechanism to prevent it. The boundary exists only because
-every participant agrees to observe it. As we will see, this assumption
-persists in different forms through the approaches that follow, and
-addressing it fully requires mechanisms of a different kind entirely.
+access the data or privileges of another. These tools offer little here:
+two services running in different environments share the same operating
+system and the same file system outside their respective directories.
+More fundamentally, the isolation they provide rests entirely on a
+cooperative assumption: every tool in the ecosystem must agree to
+respect the environment variables that redirect package lookups. A
+package that hardcodes a path to a system library, or a build script
+that bypasses the package manager entirely, will silently break out of
+the isolation with no external mechanism to prevent it. The boundary
+exists only because every participant agrees to observe it. As we will
+see, this assumption persists in different forms through the approaches
+that follow, and addressing it fully requires mechanisms of a different
+kind entirely.
 
 The third constraint concerns deployment across multiple machines and
 availability despite hardware failures. These tools are silent on
@@ -218,21 +217,21 @@ recipes.
 
 Against the constraints identified in the previous chapter, Nix and
 Guix have little to say about the first: they exercise no control over
-how processes share CPU time, memory, or any other resource.
+how services share CPU time, memory, or any other resource.
 
-The second constraint asks that no service be able to access the data
-or privileges of another. The cooperative assumption is not eliminated
-here but reduced in scope. At the package build stage, isolation is
-enforced: a package cannot silently depend on anything other than its
-declared inputs. Once the package has been built, though, the resulting
-binaries run without any restriction imposed by Nix: nothing prevents
-them from reading files outside their environment, opening network
-connections, or interacting with other processes. The activation of a
-Nix environment, like that of an ecosystem-specific tool, relies on
-environment variable adjustments that any program is free to ignore.
-The boundary that Nix draws is precise and reliable at the package
-build stage, but once the resulting binaries are running, the
-cooperative assumption remains.
+The second constraint asks that no service be able to access the data or
+privileges of another. The cooperative assumption is not eliminated here
+but reduced in scope. At the package build stage, isolation is enforced:
+a package cannot silently depend on anything other than its declared
+inputs. Once the package has been built, though, the resulting binaries
+run without any restriction imposed by Nix: nothing prevents them from
+reading files outside their environment, opening network connections, or
+interacting with other running programs. The activation of a Nix
+environment, like that of an ecosystem-specific tool, relies on
+environment variable adjustments that any program is free to ignore. The
+boundary that Nix draws is precise and reliable at the package build
+stage, but once the resulting binaries are running, the cooperative
+assumption remains.
 
 The third constraint concerns deployment across multiple machines and
 continued availability despite hardware failures. NixOS and Guix System
@@ -277,9 +276,6 @@ access to files and devices. Access to network resources is not
 addressed at this level either. Here again, it is containers that will
 fill in the gaps.
 
-Before examining these three mechanisms, we define processes, on which
-all of them rely.
-
 This section does not follow the evaluative structure used everywhere
 else in this chapter: rather than presenting a single approach and then
 situating it against all five constraints, it examines a set of related
@@ -289,6 +285,16 @@ for the approaches examined in the following sections. It is also the
 first time in this book where we move beyond pure software: some of the
 mechanisms we examine here (scheduling and memory isolation) rely on
 features provided by the processor itself.
+
+*** Scheduling
+
+
+
+*** Memory Isolation
+
+*** Access Control
+
+Users, groups and permissions, + chroot
 
 ** OS-level isolation: containers
 
