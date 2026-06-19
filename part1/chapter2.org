@@ -254,9 +254,41 @@ the kernel itself remain outside the reach of any declarative tool.
 The fifth constraint, concerning the coordination of many
 interdependent services, is not addressed by these tools either.
 
-** OS foundations: processes, scheduling and permissions
+** OS foundations: scheduling, memory isolation, and access control
 
-User vs. kernel mode, system calls.
+Operating systems have long provided mechanisms to address the first
+two constraints identified in the previous chapter, those that arise
+when sharing a machine between multiple services. The first is ensuring
+equitable access to its resources. The second is the need to prevent
+any service from accessing the data or privileges of another.
+
+In response to the first constraint, the main mechanism provided by
+operating systems is scheduling, which governs equitable access to the
+CPU. Equitable access to other resources such as memory, storage, and
+network bandwidth is not addressed at the level of operating systems.
+The following section will introduce a more complete mechanism:
+containers.
+
+In response to the second constraint, operating systems provide two
+distinct mechanisms. The first is memory isolation, which prevents a
+service from reading or writing the memory of another. The second is
+access control through users, groups, and permissions, which governs
+access to files and devices. Access to network resources is not
+addressed at this level either. Here again, it is containers that will
+fill in the gaps.
+
+Before examining these three mechanisms, we define processes, on which
+all of them rely.
+
+This section does not follow the evaluative structure used everywhere
+else in this chapter: rather than presenting a single approach and then
+situating it against all five constraints, it examines a set of related
+mechanisms that together constitute the earliest systematic response to
+constraints 1 and 2, and that also provide the conceptual foundations
+for the approaches examined in the following sections. It is also the
+first time in this book where we move beyond pure software: some of the
+mechanisms we examine here (scheduling and memory isolation) rely on
+features provided by the processor itself.
 
 ** OS-level isolation: containers
 
