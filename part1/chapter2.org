@@ -288,9 +288,64 @@ features provided by the processor itself.
 
 *** Scheduling
 
+For a long time, sharing a machine meant sharing a single processor.
+Even though this is no longer true today, it is in this context that
+the mechanisms we examine here were developed.
 
+A processor can execute only one service at a time. So if several
+services are to make progress simultaneously, the only possible way is
+to run them in turn. For that to work, it must be possible to interrupt
+a service and resume it without the service being affected by the
+interruption. This in turn requires that when a service is interrupted,
+its state is saved so that it can be restored when the service resumes,
+allowing it to continue exactly where it left off.
+
+However, the fact that it must be possible to interrupt a service does
+not mean that this ability should be given to anyone. Indeed, if any
+service could interrupt any other, equitable access to the processor
+could not be guaranteed. Hence the need for an arbitrator, which is
+the sole entity entitled to decide which service has access to the
+processor at any given time. Such an arbitrator is called a
+/scheduler/. It maintains a list of running services, each entry of
+which is called a /process/. For processes that are not currently
+executing, this entry holds their state as saved at their last
+interruption, allowing them to be resumed transparently. Each entry
+also holds whatever information the scheduler needs to decide which
+process should execute next. For instance, it holds the frequency and
+duration of processor access allocated to that process, parameters
+that the scheduler can adjust over time based on the recent behavior
+of the process. Most schedulers also allow a priority to be assigned
+to each process, which also influences the frequency and duration of
+processor access it receives.
+
+Having an arbitrator is a necessary condition for guaranteeing
+equitable access to the processor, but it is not sufficient. The
+scheduler must also be effectively capable of /preempting/ other
+processes, that is, of taking the processor away from them without
+them being able to prevent it. Such a capability can only be conferred
+by the processor itself. This requires hardware support: the processor
+must provide a privileged mode, reserved for the scheduler, and a
+restricted mode in which services execute, with the hardware itself
+enforcing the boundary between them.
+
+At this stage, two important remarks are due. On the one hand, the
+fact that processors provide several execution modes is not an
+implementation detail. On the contrary, it is a cornerstone without
+which there could be no scheduling and thus no real possibility to run
+several services on the same machine. On the other hand, our
+presentation based on two execution modes, a protected one for the
+scheduler and a restricted one for the services, is deliberately
+simpler than the reality, for pedagogical reasons. As will be seen
+later in this chapter, virtualization complicates this simple picture.
+And virtualization is only one reason why the reality is more complex.
+
+The following subsections will provide further examples of components
+that require privileged execution. The collection of all components
+that run in privileged mode is generally called a /kernel/.
 
 *** Memory Isolation
+
+
 
 *** Access Control
 
