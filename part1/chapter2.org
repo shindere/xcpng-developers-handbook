@@ -341,7 +341,23 @@ And virtualization is only one reason why the reality is more complex.
 
 The following subsections will provide further examples of components
 that require privileged execution. The collection of all components
-that run in privileged mode is generally called a /kernel/.
+that run in privileged mode is generally called a /kernel/. That is why the privileged mode in which the kernel executes is more
+commonly called /kernel mode/. Similarly, the restricted mode in which
+processes execute is more commonly called /user mode/.
+
+With this new terminology, preemption can be described as a transition
+from user mode to kernel mode initiated by the hardware. Not all such
+transitions, however, are initiated by the hardware. They can also be
+initiated by the process through a /system call/: a request to the
+kernel to perform a privileged operation.[fn:: The set of operations
+that require a system call has two origins. Some operations are
+reserved to kernel mode by the processor itself -- the corresponding
+instructions simply cannot be executed in user mode. For others, the
+choice of making them a kernel prerogative is a design decision of the
+operating system -- it is not imposed by the processor. In both cases,
+the kernel remains the mandatory intermediary: a process running in
+user mode can only access the underlying resources to the extent that
+the kernel permits.]
 
 *** Memory Isolation
 
@@ -363,7 +379,7 @@ pages that have been allocated to that process. A process can only
 form virtual addresses that fall within its own address space: it has
 no knowledge of the physical addresses used by other processes, and no
 way to reach them. Isolation is thus guaranteed by construction, not
-by explicit access checks at each memory access.
+by explicit checks at each memory access.
 
 The translation from virtual to physical addresses is performed at
 every memory access by a unit integrated into the processor called the
