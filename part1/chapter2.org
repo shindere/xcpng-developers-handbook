@@ -345,7 +345,37 @@ that run in privileged mode is generally called a /kernel/.
 
 *** Memory Isolation
 
+Early operating systems gave each process direct access to physical
+memory. Any process could read or write any address, including
+addresses belonging to other processes. This made isolation between
+services impossible to guarantee.
 
+Virtual memory was introduced to solve this problem while preserving
+the addressing model that programs rely on. Each process is given its
+own address space, which it perceives as a contiguous and exclusive
+range of addresses. The addresses a process uses are /virtual
+addresses/, which do not correspond directly to physical addresses.
+
+Memory is divided into fixed-size blocks called /pages/. The kernel
+maintains, for each process, a /page table/ mapping its virtual
+addresses to physical addresses. This table contains entries only for
+pages that have been allocated to that process. A process can only
+form virtual addresses that fall within its own address space: it has
+no knowledge of the physical addresses used by other processes, and no
+way to reach them. Isolation is thus guaranteed by construction, not
+by explicit access checks at each memory access.
+
+The translation from virtual to physical addresses is performed at
+every memory access by a unit integrated into the processor called the
+/MMU/ (Memory Management Unit). The kernel configures the page tables;
+the MMU uses them to perform translations. This is another instance of
+the cooperation between software and hardware seen in the previous
+subsection: the kernel cannot enforce memory isolation by software
+alone, and the MMU cannot operate without the page tables the kernel
+maintains.
+
+Virtual memory will reappear in a more complex form when we examine
+virtualization.
 
 *** Access Control
 
