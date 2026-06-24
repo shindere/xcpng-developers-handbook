@@ -395,12 +395,61 @@ virtualization.
 
 *** Access Control
 
-Users, groups and permissions, + chroot
+Virtual memory prevents a process from accessing the memory of
+another, but it says nothing about files and devices. A process that
+cannot access another process's memory can still open its files,
+overwrite its configuration, or access a device it should not.
+Addressing constraint 2 in full thus requires a separate mechanism,
+one that governs access to files and devices.
+
+For such a mechanism to be effective, it must be impossible for any
+process to bypass it. This is achieved by requiring all access to
+files and devices to go through the kernel, via system calls. The
+kernel is thus the natural enforcer of access control for files and
+devices.
+
+The problem is then one of identification and authorization. To decide
+whether a given process may access a given resource, the kernel must
+first be able to identify both who owns the process and who owns the
+resource.
+
+Unix addresses this through a model known as /discretionary access
+control/ (DAC), built on three concepts: users, groups, and
+permissions. Each process runs on behalf of a user, and each file
+belongs to a user. This makes it possible to express ownership, but
+ownership alone is not enough: it is also useful to be able to control
+access at a coarser granularity than individual users. This is the
+role of /groups/: a file belongs to a group as well as to a user, and
+all members of that group are subject to the same access level for
+that file.
+
+Access itself, however, is not a single indivisible property. It can
+be split into three atomic ones: reading a file's contents, writing to
+it, and executing it. /Permissions/ define, for each of these
+properties, whether it is authorized. They do so for three scopes
+separately: the owner of the file, the members of its group, and all
+other users.
+
+Finally, one aspect of isolation that the DAC model does not address
+is the structure of the filesystem itself. A process with appropriate
+permissions can navigate the entire filesystem. Nothing in the
+permission model restricts which part of it a process may explore.
+
+The ~chroot~ system call, introduced in Unix in 1979, was an early
+response to this concern. It changes the root directory of a process
+to a specified directory, confining the process to a subtree of the
+filesystem. Files outside that subtree become invisible to the process:
+it cannot name them, and therefore cannot access them regardless of
+permissions.
+
+~chroot~ reflects a preoccupation with filesystem isolation that
+predates most of the approaches examined in this chapter. It is also a
+conceptual ancestor of the namespace mechanisms that will be examined
+in the following section.
 
 ** OS-level isolation: containers
 
 Docker, podman
-
 
 ** Emulators
 
