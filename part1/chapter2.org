@@ -447,9 +447,126 @@ predates most of the approaches examined in this chapter. It is also a
 conceptual ancestor of the namespace mechanisms that will be examined
 in the following section.
 
-** OS-level isolation: containers
+** OS-level Isolation: Containers
 
-Docker, podman
+We now introduce containers and evaluate them against the five
+constraints identified in the previous chapter. Containers rely on
+three mechanisms (namespaces, cgroups, and images) that we describe in
+turn, before explaining how containers are built on top of them.
+
+*Namespaces.* The previous section introduced ~chroot~, which confines
+a process to a subtree of the filesystem. A process confined in such a
+way cannot name files outside that subtree, and therefore cannot access
+them. However, ~chroot~ only isolates the filesystem. Other aspects of
+a process' execution environment, such as process identifiers, network
+interfaces, and users, remain shared with the rest of the system. A
+process confined by ~chroot~ can still see other processes and send
+them signals, access any network interface of the host, and share its
+view of users and groups. Namespaces generalize the principle of
+~chroot~ to many aspects of a process' execution environment.
+
+Here are a few examples of namespaces available on Linux. A mount
+namespace gives a process its own table of mounted filesystems,
+independently of the host's. (In particular, a process can mount any
+filesystem as its root, which means that ~chroot~ can be seen as a special
+case of what a mount namespace provides.) A PID namespace gives a process
+its own set of process identifiers: processes outside the namespace are
+invisible to it, and even the identifiers it sees bear no relation to
+those used on the host. A network namespace gives a process its own set
+of network interfaces and routing tables. In each case, the isolation is
+structural rather than based on explicit access checks: the entities a
+process cannot access are simply absent from its view of the system.
+This is the same principle we observed with virtual memory, where a
+process cannot reach the memory of another simply because that memory
+does not appear in its address space.
+
+*Cgroups.* Namespaces control what a process can see. However, they
+provide no mechanism to express or enforce limits on what it can
+consume. Except CPU time which is covered by scheduling, nothing
+prevents a process running in its own set of namespaces from exhausting
+most of the resources available to the host, starving other processes of
+them. This is what /cgroups/, short for control groups, address. They
+make it possible to limit and account for the resource usage of a
+process or a group of processes: CPU time (complementing the scheduling
+discussed earlier with precise quotas and usage accounting), memory,
+network bandwidth, and others. Where namespaces provide isolation,
+cgroups provide containment. Like scheduling and virtual memory, both
+namespaces and cgroups are implemented as kernel mechanisms; unlike
+them, though, they require no dedicated hardware support.
+
+*Images.* Namespaces and cgroups together define the boundaries of a
+process' execution environment. It still remains to be specified what
+will run in that execution environment. Just as a program is an
+executable that can be run by an operating system, an /image/ is an
+executable that can be run inside an execution environment. Such an
+image consists of both a read-only filesystem that embeds the service to
+be run and its dependencies, and an entry point: the program that will
+actually be executed when the image is run. Because an image is
+self-contained, it can be run on any host, independently of what is
+installed on it.
+
+*Containers.* Launching an image involves creating a mount namespace and
+mounting its filesystem as the root of that namespace, creating
+additional namespaces to isolate various aspects of its execution
+environment, such as its view of processes, network interfaces, and
+users, and creating cgroups to bound its resource consumption. Its entry
+point is then executed: it runs as a process in that confined
+environment. Just as running a program yields a process, running an
+image yields a /container/. This is not merely an analogy: at the system
+level, running an image amounts to running its entry point, a program,
+which effectively yields a process. Just as a program can be run several
+times, each run yielding a distinct process, likewise an image can be
+run several times, each run yielding a distinct container. And, as
+processes can be started, stopped, resumed, and terminated, so can
+containers: they, too, have a life cycle.
+
+The software that made containers popular is Docker, and it remains the
+most widely used containerisation platform. It makes two design choices
+in the name of simplicity: it centers on a daemon, and it runs that
+daemon as root. The first choice creates a single point of failure: if
+the daemon stops, all containers become unreachable. The second has a
+cost in terms of security: any user authorized to communicate with the
+daemon thus has effective root access to the host, and can, for
+instance, ask it to mount the host's root filesystem into a container
+started from an otherwise ordinary image, hence gaining full access to
+the host's whole filesystem.
+
+An alternative that addresses these drawbacks is Podman. At the cost of
+a more complex implementation, it departs from both of Docker's choices:
+it requires no daemon, and containers can be run without any root
+privileges, a mode known as rootless containers.
+
+Now, turning to the constraints of Chapter 1: containers address
+constraint 1 through cgroups. Where the scheduling discussed in the
+previous section already protected the CPU, cgroups extend this
+protection to memory, network bandwidth, and other resources, preventing
+any service from monopolizing them.
+
+Constraint 2 is addressed through namespaces: since the resources of a
+container are simply not visible from others, it becomes impossible for
+any service to access either the data or the privileges of that
+container.
+
+Constraint 3 is only partially addressed: images ensure that a service
+can be deployed consistently across multiple hosts, which is a necessary
+condition for distributed deployment, but keeping services available
+despite hardware failures, and updating them without user-visible
+interruption, requires coordinating containers across a cluster of
+machines, which is beyond what containers themselves provide; it is the
+role of cluster management tools such as Kubernetes or Docker Swarm.
+
+Constraint 4 is addressed by images: because an image is immutable and
+self-contained, images provide the same degree of environment
+consistency as the declarative approaches examined in Section 2 of this
+chapter. Here too, the main remaining source of variation is the host's
+kernel.
+
+Finally, constraint 5 is not addressed at all by containers themselves.
+Coordinating the deployment, monitoring, and life cycles of many
+interdependent services requires tooling that operates above the level
+of individual containers. Tools such as Docker Compose handle this at
+small scale, while tools such as Helm address it at the scale of a
+cluster of machines.
 
 ** Emulators
 
