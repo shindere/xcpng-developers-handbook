@@ -570,13 +570,137 @@ cluster of machines.
 
 ** Emulators
 
-*** Full emulation
+All the approaches examined so far were developed with the constraints
+of the previous chapter as a central concern. Emulators were not: they
+were designed to serve different needs, and whatever they have to say
+about those constraints is incidental. We examine them here because
+they occupy an important place in the landscape of systems software,
+and because some of the concepts they rely on, in particular the
+distinction between host and guest, are the same ones we will encounter
+again when we turn to virtualization.
 
-Emulators for game consoles and old computers
+The first need is compatibility, understood broadly. Software written
+for a system that no longer exists must somehow be made to run on
+current hardware. But compatibility has a forward-looking face as
+well: a developer may want to write software that is independent of
+any particular platform, meaning any combination of hardware and
+operating system, so that it can run anywhere without modification.
+These two motivations are different, but they call for the same
+mechanism.
 
+The second need is control. Running software in an environment that
+the developer fully controls, where execution can be observed,
+interrupted, and replayed, is valuable both for debugging and for
+testing. This need overlaps more directly with some of the constraints
+of the previous chapter, though it was not originally framed in those
+terms.
 
-*** Wine: a special case
+An /emulator/ addresses these needs by reproducing the behavior of a
+/target/ platform on a /host/ platform. The guest program runs as though
+it were executing on the target platform; the host platform runs the
+emulator, which decodes and executes each guest instruction on the guest
+program's behalf. Familiar examples include FCEUX, which emulates the
+Nintendo Entertainment System and runs on Linux, Windows, and macOS;
+RetroArch, a frontend that bundles emulators for a wide range of
+consoles and runs on the same platforms; and DOSBox, which emulates a
+complete x86 PC including its processor, memory, and peripherals, and
+runs on Linux, Windows, and macOS. In each case the emulated system is
+the guest and the machine running the emulator is the host. These
+emulators serve the compatibility need: they make it possible to run
+software written for hardware that no longer exists or is no longer
+practical to use.
 
+QEMU, in its emulation mode, serves both needs. It can emulate a wide
+range of processor architectures, making it possible to run software
+compiled for one architecture on a machine with a different
+architecture. It can also emulate a given architecture on itself,
+which is useful for testing and debugging: a program running under
+QEMU has no direct access to the host hardware, and its execution can
+be observed and interrupted at will.
+
+The Java Virtual Machine follows a related but distinct logic. Rather
+than reproducing the behavior of an existing physical system, the JVM
+defines an abstract machine: a set of instructions, called bytecode,
+that correspond to no real processor, for which Java programs are
+compiled. Any conforming JVM implementation will execute them
+identically, regardless of the underlying host platform. This is what
+"virtual" means in "Java Virtual Machine": the machine exists only as
+a specification, not as physical hardware. The JVM was introduced in
+1995 with the slogan "write once, run anywhere," and it serves the
+portability face of the compatibility need: write for the abstract
+machine, and the implementation takes care of the rest. This sense of
+"virtual machine" is different from the one we will encounter in the
+next section, where a virtual machine is a reproduction of a real
+physical hardware environment rather than an abstract specification.
+
+The idea behind the JVM is older than it might seem. In 1979, Infocom
+designed the Z-machine, a specification for an abstract processor for
+which all of their interactive fiction games were compiled. A Z-machine
+interpreter was then written for each platform Infocom wanted to
+support, making the games themselves fully portable. Any conforming
+Z-machine interpreter will produce the same results, because the
+guarantee rests not on a particular implementation but on the rigor of
+the specification. The JVM applied the same principle to
+general-purpose programming sixteen years later.
+
+Not all systems that model another system's behavior aim for this kind
+of faithful reproduction. A /simulator/ models some aspects of a
+system's behavior for the purpose of observation or analysis, without
+attempting to reproduce the system completely or execute its actual
+code. The iOS simulator included in Xcode is a clear example. An
+iPhone has sensors, an accelerometer, a gyroscope, a compass, that
+have no physical counterpart on a Mac. The simulator does not
+reproduce this hardware; instead, it provides a software interface
+through which the developer can inject artificial sensor data, for
+instance simulating a rotation or a change of orientation using
+controls in the Xcode interface. The application under development
+interacts with this interface as though it were talking to real
+hardware. The goal here is not faithful reproduction but a controlled
+environment in which the application can be developed and tested
+without requiring a physical device.
+
+Finally, Wine occupies a different position in this landscape. It
+allows programs compiled for Windows to run on Linux, but it does not
+emulate the Windows hardware environment or interpret Windows
+executable code. Instead, it provides reimplementations of the Windows
+API libraries, such as =kernel32.dll= and =user32.dll=. When a Windows
+program calls a function from one of these libraries, Wine's
+implementation of that function translates the call into the equivalent
+Linux system call. The Windows program's own code runs natively on the
+host processor throughout. This is why Wine's name is a recursive
+acronym for "Wine Is Not an Emulator": compatibility is achieved not
+by reproducing a hardware environment but by reimplementing the
+software interface that the program depends on. The result is that
+Windows programs run at native speed under Wine, but only if Wine
+implements the API calls they make.
+
+As noted at the outset, the tools examined in this section were not
+designed as responses to the constraints of the previous chapter, and
+it would be misleading to evaluate them as if they were. Nevertheless,
+some observations are worth making. On constraint 1, running multiple
+services on the same machine with equitable access to resources,
+emulators bring nothing specific: multiple emulators can run
+concurrently on the same host, but this is simply because they are
+ordinary processes managed by the host operating system's scheduler.
+On constraint 2, preventing any service from accessing the data or
+privileges of another, emulators offer a form of isolation as a
+byproduct of how they work: a guest program can only access the
+resources that the emulator exposes to it. The quality of this
+isolation depends entirely on the emulator's implementation and on
+whatever isolation mechanisms the host operating system makes
+available; it is not guaranteed by construction. On constraint 3,
+deploying services across multiple machines so that they remain
+available despite hardware failures, emulators have nothing to offer
+regarding availability or seamless updates; they do, however,
+contribute to portability, as discussed above. On constraint 4,
+keeping development, testing, and production environments consistent,
+emulators are genuinely useful: because an emulator reproduces a
+target platform deterministically, a program that runs correctly under
+the emulator in development can be expected to behave the same way in
+production, regardless of differences in the host hardware. On
+constraint 5, coordinating the deployment, monitoring, and life cycles
+of many interdependent services, emulators have nothing to offer: this
+constraint is simply outside their scope.
 
 ** Virtualization
 
