@@ -702,11 +702,289 @@ constraint 5, coordinating the deployment, monitoring, and life cycles
 of many interdependent services, emulators have nothing to offer: this
 constraint is simply outside their scope.
 
-** Virtualization
+** Machine Virtualization
 
-Desktop vs. server virtualization
+This section occupies a particular place in this chapter. The
+approaches examined so far were chosen because they address, each in
+its own way, the constraints identified in the previous chapter.
+Machine virtualization is examined here for the same reason, but also
+because it is the central subject of this book: XCP-ng is a
+virtualization platform, and the concepts introduced in this section
+will be used throughout the rest of this book.
 
-*** Full virtualization
+We start by defining what machine virtualization is, then turn to
+introducing hypervisors, before evaluating machine virtualization
+against the constraints identified in the previous chapter.
 
+*** What Virtualization Is
 
-*** Paravirtualization, and where XCP-ng fits in
+The previous chapter identified, among other constraints, the need to
+run multiple services on the same machine with equitable access to its
+resources and without any service being able to access the data or
+privileges of another. The approaches examined so far constitute
+successive responses to these constraints, each offering stronger
+isolation than the previous one. Virtual environments and Nix and Guix
+rest on a cooperative assumption: the isolation they provide depends on
+every component agreeing to observe it. Containers lift this assumption
+partially, enforcing isolation through kernel mechanisms rather than
+convention. The isolation they provide, however, remains bounded by a
+fundamental constraint: all containers running on a given machine share
+that machine's kernel. A vulnerability in the kernel exposes all of them
+simultaneously, and a flaw in the namespace mechanisms can allow a
+container to escape to the host.
+
+Machine virtualization lifts this assumption entirely, but at a cost.
+Rather than sharing a kernel, each service runs inside its own complete
+operating system, with its own kernel. The isolation between services is
+therefore as strong as the isolation between two separate machines,
+which is why each such isolated operating system instance is called a
+/virtual machine/. The cost of this strength is significant: where a
+conventional system runs one kernel per machine, machine virtualization
+requires at least one kernel per service[fn:: As will be explained soon,
+the exact number depends on the type of hypervisor.].
+
+Once this principle is established, the question arises of how to
+execute the instructions of a guest system. One answer is to interpret
+them one by one: this is precisely what the emulators examined in the
+previous section do, with the advantage in terms of flexibility
+regarding processor architectures and the performance cost we had identified. Machine virtualization chooses a
+different answer: to have the host hardware execute those instructions
+directly. This requires that the host and the guest share the same
+processor architecture, but it eliminates the interpretation overhead
+entirely.
+
+*** Hypervisors
+
+**** Motivation And Definition
+
+A guest operating system running on a host machine expects to run in
+kernel mode, just as it would on real hardware. On the host, however,
+kernel mode is already occupied by the host kernel, and the hardware
+itself enforces this: no other component can enter kernel mode without
+the host kernel's involvement. Two operating systems therefore cannot
+both run in kernel mode on the same machine at the same time.
+
+When we examined how multiple processes share a machine, we found that
+this situation calls for a privileged component that stands above the
+processes and that the hardware itself protects from being usurped:
+the kernel. The same logic applies here: running multiple kernels on
+the same machine requires a privileged component that stands above
+them in the same way. This component is called a /hypervisor/.
+
+**** Dealing With Privileged Instructions
+
+Although Popek and Goldberg established in 1974 that a more privileged
+execution mode would be necessary for hypervisors to function
+properly, it is only some years later that hardware actually provided
+such a mode. Two software solutions were developed in the interim,
+each working within the constraints of the existing two-mode execution
+model.
+
+The first software solution, binary translation, works as follows: the
+hypervisor inspects the instructions of the guest kernel before they
+are executed and replaces privileged instructions on the fly with
+equivalent sequences that can be executed without conflict. From the
+guest's perspective, everything appears to work as expected. This
+approach requires no modification to the guest system and thus makes it
+possible to virtualize any operating system, including one that has no
+knowledge of being virtualized. The cost of this generality is
+performance: the hypervisor must inspect and potentially rewrite
+instructions before every execution. VMware popularized this technique
+in its early products.
+
+The second software solution, /paravirtualization/, takes a different
+approach. Rather than correcting privileged instructions after the
+fact, the guest operating system itself is modified to replace them
+with explicit calls to the hypervisor, known as /hypercalls/. Because
+the guest cooperates actively with the hypervisor, the overhead of
+binary translation is eliminated, and performance is significantly
+closer to that of a native system. The cost of this efficiency is
+flexibility: only guest systems available in a version designed to run
+in a virtualized environment can be paravirtualized. Xen, introduced
+in 2003, made paravirtualization its primary approach.
+
+When hardware support eventually arrived, with Intel's VT-x and AMD's
+AMD-V extensions, it introduced the third execution mode that Popek
+and Goldberg had identified as necessary. With this mode available,
+the hypervisor could run at a privilege level above kernel mode,
+eliminating the conflict between host and guest kernels entirely. This
+made it possible to run unmodified guest operating systems efficiently:
+the performance cost of binary translation and the flexibility
+constraint of paravirtualization were both overcome.
+
+**** Design Choices
+
+Historically, the design of hypervisors has been shaped by two
+concerns: their position relative to the host hardware, and the
+functionality they must provide, which depends on what is being
+virtualized.
+
+On the first concern: the description given earlier of the hypervisor
+as the most privileged component on the machine naturally leads to a
+first kind of implementation: a hypervisor that runs directly on the
+hardware, with no host operating system beneath it. This is called a
+/type 1/ hypervisor. In practice, however, a different need also
+arises: adding virtualization capabilities as a layer on top of an
+existing system, without replacing its foundations, in the same way
+that a new software component can be installed on a running system
+without disrupting it. A hypervisor that meets this need by running on
+top of an existing host operating system, as an application among
+others, is called a /type 2/ hypervisor. A type 2 hypervisor does not
+itself occupy the highest privilege level: it is the host kernel that
+remains the most privileged component and that provides the underlying
+mechanisms the hypervisor depends on. Because there is no standard
+interface between type 2 hypervisors and kernels, each type 2
+hypervisor must arrange for the kernels it wants to run on to expose
+the primitives it needs, typically by installing kernel modules. It is
+these kernel modules that use the hardware virtualization extensions
+and execute in the most privileged mode; the rest of the hypervisor
+runs in user space, handling tasks such as device emulation and
+management.
+
+On the second concern: the functionality a hypervisor must provide
+depends on what it is asked to virtualize. Two broad use cases have
+emerged. The first is desktop virtualization: virtualizing complete
+interactive working environments, with graphical interfaces, audio
+devices, USB peripherals, and other hardware that users interact with
+directly, and where the responsiveness of the interactive experience
+is a primary concern. The second is server virtualization: running
+services on dedicated hardware, for instance in a data center, where
+the primary concerns are to abstract the underlying hardware so that
+services remain independent of the physical machines they run on, and
+to maximize isolation, density (that is, the number of virtual
+machines that can run simultaneously on a given host), and
+availability. These two use cases pull in opposite directions: desktop
+virtualization must expose the host hardware as faithfully and richly
+as possible, while server virtualization seeks to abstract and hide
+it.
+
+The traditional type 1 / type 2 distinction tended to reinforce this
+separation: type 2 hypervisors such as VMware Workstation, VirtualBox,
+and Citrix Virtual Apps and Desktops were adopted primarily for
+desktop use, while type 1 hypervisors such as VMware ESXi, Xen, and
+Microsoft Hyper-V were adopted primarily for server use.
+
+KVM illustrates how a different approach can partly transcend these
+distinctions. Rather than being a standalone hypervisor of either
+type, KVM is a kernel module that turns the Linux kernel itself into a
+hypervisor. It runs directly on the hardware, giving it the control
+and isolation of a type 1 hypervisor, while remaining integrated with
+a full general-purpose operating system, which gives it access to the
+rich ecosystem of Linux drivers and tools. This combination allows it
+to serve both desktop and server virtualization depending on the
+context, and it has become the foundation of many modern
+virtualization stacks, including those used by major cloud providers.
+
+**** The Xen Hypervisor
+
+Among the type 1 hypervisors mentioned above, Xen deserves closer
+examination, as it is the foundation on which XCP-ng is built.
+
+In Xen's terminology, every virtual machine running on the hypervisor
+is called a /domain/. Given the privilege level at which the
+hypervisor executes, Xen takes the approach of minimizing the code
+that runs at that level, moving out of the hypervisor everything that
+can be moved out. Indeed, every line of code that runs at the highest
+privilege level is a potential source of vulnerabilities, and keeping
+that code minimal thus reduces the attack surface.[fn:: This principle
+is shared by microkernel operating systems such as GNU Hurd, which
+keep the kernel itself minimal and delegate most services to user-space
+components. The motivation is the same: a smaller trusted computing
+base is easier to reason about and to secure.] The functionality that
+does not need to reside in the hypervisor is gathered into a dedicated
+privileged virtual machine, called /Dom0/ (domain zero), which is the
+first domain to start when the system boots. The hypervisor grants
+Dom0 direct access to the hardware and ensures that no other domain
+has this permission. Dom0 also has the ability to create, configure,
+and destroy other domains. The remaining domains, which have none of
+Dom0's privileges, are called /DomU/ (unprivileged domains). This
+approach, which keeps the hypervisor minimal by delegating
+responsibilities to Dom0, is sometimes described as a /thin
+hypervisor/.
+
+This design is a step towards a more secure architecture: by moving
+privileged code out of the hypervisor, it reduces the attack surface
+at the highest privilege level. Dom0, however, still concentrates a
+great deal of trust, and if it is compromised, an attacker gains
+control over the entire system. This has motivated work on breaking
+Dom0 itself into smaller components, each holding only the privileges
+strictly necessary for its function, an approach sometimes called
+Dom0 disaggregation.
+
+Finally, the distinction between full virtualization and paravirtualization,
+which shaped the early history of machine virtualization, has become
+less sharp over time. When hardware support arrived with VT-x and
+AMD-V, it became possible to run unmodified guest operating systems
+efficiently, without relying on binary translation. Xen, which had
+introduced paravirtualization as its primary approach, adopted hardware
+support as well, and modern versions of Xen use both approaches
+depending on the circumstances: paravirtualization where the guest
+system supports it, and hardware-assisted full virtualization
+otherwise. QEMU follows a similar logic in a different register: in
+its emulation mode, it interprets each guest instruction, at the cost
+of performance; when used together with KVM, it delegates the
+execution of guest instructions to the hardware and handles only
+device emulation itself, combining the flexibility of emulation with
+the performance of hardware-assisted virtualization.
+
+*** How Virtualization Addresses The Constraints Of Chapter 1
+Machine virtualization addresses the first constraint, equitable
+access to resources, at a different level than the approaches examined
+previously. Operating system scheduling and container cgroups both
+operate at the level of individual processes: they control how
+processes share CPU time, memory, and other resources. Machine
+virtualization operates at the level of entire virtual machines: the
+hypervisor allocates resources to each virtual machine as a whole. The
+mechanisms differ, but the result is comparable: no single service can
+monopolize the resources of the host.
+
+The four other constraints all benefit from the same central property
+of machine virtualization: each virtual machine runs its own kernel,
+making it a self-contained and portable unit whose isolation from
+other virtual machines is as strong as the isolation between two
+separate physical machines. This property comes at a cost, however:
+this approach requires running one kernel per virtual machine, which
+represents a significant overhead in memory and storage compared to
+the approaches examined previously.
+
+For the second constraint, preventing any service from accessing the
+data or privileges of another, this property means that there is no
+shared kernel through which one service could reach another. The
+isolation is not absolute, however: the hypervisor itself is a shared
+component, and depending on the chosen virtualization solution, Dom0
+or the host kernel may also be shared. A vulnerability in any of
+these components could potentially be exploited to cross the boundary
+between virtual machines.
+
+For the third, fourth, and fifth constraints, the central observation
+is that because a virtual machine encapsulates a complete environment,
+kernel included, it can be treated as an opaque and portable unit by
+any tool that operates above it. Unlike the approaches examined
+previously, which remain dependent on the host kernel and must
+delegate the management of that dependency to coordination tools,
+virtual machines make the problem disappear entirely: any host running
+the same hypervisor can run the virtual machine.
+
+For the third constraint, deploying services across multiple machines
+and keeping them available despite hardware failures, a virtual
+machine can therefore be moved from one host to another without any
+dependency on the host's kernel. Keeping services available despite
+hardware failures and updating them without interruption, however,
+still requires coordination tools that operate above the level of
+individual virtual machines.
+
+For the fourth constraint, keeping development, testing, and
+production environments consistent with one another, machine
+virtualization goes further than any of the approaches examined
+previously: it eliminates the main remaining source of variance that
+was identified for containers and for Nix and Guix, namely the
+dependency on the host kernel.
+
+For the fifth constraint, coordinating the deployment, monitoring, and
+life cycles of many interdependent services, machine virtualization
+does not provide a solution by itself, just as the approaches examined
+previously do not. Coordination tools that operate above the level of
+individual virtual machines are required. Because virtual machines are
+fully encapsulated units, such tools can treat them as opaque and
+portable objects, providing a better foundation for building them than
+the approaches examined previously.
