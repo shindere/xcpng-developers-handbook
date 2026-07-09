@@ -1,4 +1,4 @@
 # Files Git should ignore
 
-# The site directory where publication artifacts get stored
-site/
+# The different exports of the book
+site/xcpng-developers-handbook.html

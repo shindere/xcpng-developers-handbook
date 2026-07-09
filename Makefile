@@ -1,21 +1,45 @@
-.PHONY: all
-all: publish
+# Source files of the book
+# To keep the list simple and easy to read:
+#   - One file name per line
+#   - No attempt to factor directory names
+#   - Book's main file (book.org) as the first file
+#   - Other files in their order of inclusion in book.org
+SOURCE_FILES := \
+  ./book.org \
+  ./introduction.org \
+  ./part1/part1.org \
+  ./part1/chapter1.org \
+  ./part1/chapter2.org \
+  ./part2/part2.org \
+  ./part2/chapter3.org \
+  ./part2/chapter4.org \
+  ./part2/chapter5.org \
+  ./part2/chapter6.org \
+  ./part3/part3.org \
+  ./part3/chapter7.org \
+  ./part4/part4.org \
+  ./part4/chapterx.org \
+  ./part4/chapterxplus1.org \
+  ./part4/chapterxplus2.org \
+  ./conclusion.org
 
-.PHONY: publish
-publish: book.html
-	mkdir -p site
-	mv $< site/index.html
+# List of files to be published
+
+PUBLIC_FILES := $(addprefix site/,\
+  xcpng-developers-handbook.html)
+
+.PHONY: all
+all: $(PUBLIC_FILES)
 
 .PHONY: html
-html: book.html
+html: site/xcpng-developers-handbook.html
 
-# book.html should depend on all Org sources
-book.html: book.org
+site/xcpng-developers-handbook.html: $(SOURCE_FILES)
 	emacs --batch \
 	  --load org \
 	  --visit $< \
-	  --funcall org-html-export-to-html
+	  --eval "(org-export-to-file 'html \"$@\")"
 
 .PHONY: clean
 clean:
-	rm -rf book.html site
+	rm -f $(PUBLIC_FILES)

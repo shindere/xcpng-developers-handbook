@@ -22,7 +22,7 @@ jobs:
 
       - name: Generate HTML file
         run: |
-          make publish
+          make
 
       - name: Upload pages artifact
         uses: actions/upload-pages-artifact@v5
